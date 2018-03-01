@@ -1,0 +1,63 @@
+#!/bin/bash
+
+if [ "$1" = "-h" ]; then
+echo "As soon as I have time, there will be help"
+fi
+
+APP_NAME=$1
+NORMALIZED_APP_NAME="${APP_NAME//./-}"
+WEB_APP_ADDRESS="${APP_NAME//./-}"
+APP_ROOT="/opt/bitnami/apps"
+CURRENT_APP_ROOT="$APP_ROOT/$NORMALIZED_APP_NAME"
+WV_APP_ADDRESS="$WEB_APP_ADDRESS.sandbox.webvalley.cz"
+WVA_APP_ADDRESS="$WEB_APP_ADDRESS.sandbox.webvalleyagency.com"
+
+# APP INFORMATION PRINT
+printf "\n"
+printf "App %s will be created.\n\n" "$APP_NAME"
+printf "Directory: %s\n" "$CURRENT_APP_ROOT"
+printf "Web address: %s\n" "$WV_APP_ADDRESS"
+printf "Web alias: %s\n" "$WVA_APP_ADDRESS"
+printf "\n"
+
+# COFIRM APP CREATION
+read -p "Proceed? [y/n] " -n 1 -r
+if [[ ! $REPLY =~ ^[Yy]$ ]]
+then
+    exit 1
+fi
+
+# MAKE ALL DIRECTORIES
+mkdir "$CURRENT_APP_ROOT" \
+        "$CURRENT_APP_ROOT/conf" \
+        "$CURRENT_APP_ROOT/htdocs" \
+        "$CURRENT_APP_ROOT/log" \
+        "$CURRENT_APP_ROOT/ssl" \
+        "$CURRENT_APP_ROOT/temp"
+
+# COPY CONFIG FILES
+cp "./bitnami_httpd_vhost_example.conf" "$CURRENT_APP_ROOT/conf/httpd-vhosts.conf"
+cp "./bitnami_httpd_app_example.conf" "$CURRENT_APP_ROOT/conf/httpd-app.conf"
+touch "$CURRENT_APP_ROOT/conf/htaccess.conf"
+
+# COPY SSL
+cp "./star_sandbox_webvalley_cz.crt" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalley_cz.crt"
+cp "./star_sandbox_webvalley_cz.chain.crt" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalley_cz.chain.crt"
+cp "./star_sandbox_webvalley_cz.key" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalley_cz.key"
+cp "./star_sandbox_webvalleyagency_com.crt" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalleyagency_com.crt"
+cp "./star_sandbox_webvalleyagency_com.chain.crt" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalleyagency_com.chain.crt"
+cp "./star_sandbox_webvalleyagency_com.key" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalleyagency_com.key"
+
+# REMOVE PLACEHOLDERS
+sed -i.bak s/__WV_DOMAIN__/$WV_APP_ADDRESS/g "$CURRENT_APP_ROOT/conf/httpd-vhosts.conf"
+sed -i.bak s/__WVA_DOMAIN__/$WVA_APP_ADDRESS/g "$CURRENT_APP_ROOT/conf/httpd-vhosts.conf"
+sed -i.bak s/__APP__/$NORMALIZED_APP_NAME/g "$CURRENT_APP_ROOT/conf/httpd-vhosts.conf"
+rm -f "$CURRENT_APP_ROOT/conf/httpd-vhosts.conf.bak"
+
+sed -i.bak s/__APP__/$NORMALIZED_APP_NAME/g "$CURRENT_APP_ROOT/conf/httpd-app.conf"
+rm -f "$CURRENT_APP_ROOT/conf/httpd-app.conf.bak"
+
+printf "\n\n"
+printf "App $APP_NAME has been created"
+printf "\n"
+
