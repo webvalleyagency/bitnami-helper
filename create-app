@@ -4,17 +4,17 @@ if [ "$1" = "-h" ]; then
 echo "As soon as I have time, there will be help"
 fi
 
-################################
-# 1) Prepare variables
-################################
+####################################
+# 1) Grab inputs and prepare vars
+####################################
 APP_NAME=$1
 APP_ROOT="/opt/bitnami/apps/$APP_NAME"
 DOMAIN="${APP_NAME//-/.}"
 DOMAIN_ALIAS="www.$DOMAIN"
 
-################################
-# 2) print app information
-################################
+####################################
+# 2) Print app info
+####################################
 printf "\n"
 printf "App %s will be created.\n\n" "$APP_NAME"
 printf "Directory: %s\n" "$APP_ROOT"
@@ -22,23 +22,23 @@ printf "Domain: %s\n" "$DOMAIN"
 printf "Domain alias: %s\n" "$DOMAIN_ALIAS"
 printf "\n"
 
-################################
-# 3) ask to confirm
-################################
+####################################
+# 3) Confirm app create by user
+####################################
 read -p "Proceed? [y/n] " -n 1 -r
 if [[ ! $REPLY =~ ^[Yy]$ ]]
 then
     exit 1
 fi
 
-################################
-# 4) copy vhost folder
-################################
+####################################
+# 4) Copy example vhost folder
+####################################
 cp -R "vhost/" $APP_ROOT
 
-################################
-# 5) copy SSL (for sandbox only)
-################################
+####################################
+# 4a) Copy SSL (for sandbox only)
+####################################
 # cp "./star_sandbox_webvalley_cz.crt" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalley_cz.crt"
 # cp "./star_sandbox_webvalley_cz.chain.crt" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalley_cz.chain.crt"
 # cp "./star_sandbox_webvalley_cz.key" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalley_cz.key"
@@ -46,17 +46,17 @@ cp -R "vhost/" $APP_ROOT
 # cp "./star_sandbox_webvalleyagency_com.chain.crt" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalleyagency_com.chain.crt"
 # cp "./star_sandbox_webvalleyagency_com.key" "$CURRENT_APP_ROOT/ssl/star_sandbox_webvalleyagency_com.key"
 
-################################
-# 6) copy placeholders
-################################
+####################################
+# 5) Replace placeholders with vars
+####################################
 find $APP_ROOT -type f -print0 | xargs -0 sed -i "s@%APP%@$APP_NAME@g"
 find $APP_ROOT -type f -print0 | xargs -0 sed -i "s@%APP_ROOT%@$APP_ROOT@g"
 find $APP_ROOT -type f -print0 | xargs -0 sed -i "s@%DOMAIN%@$DOMAIN@g"
 find $APP_ROOT -type f -print0 | xargs -0 sed -i "s@%DOMAIN_ALIAS%@$DOMAIN_ALIAS@g"
 
-################################
-# 7) add necessary includes
-################################
+####################################
+# 6) Add includes to apache and php
+####################################
 APACHE_VHOST_FILE="/opt/bitnami/apache2/conf/bitnami/bitnami-apps-vhosts.conf"
 APACHE_APPEND_PHRASE="Include \"/opt/bitnami/apps/$APP_NAME/conf/httpd-vhosts.conf\""
 grep -q -F "$APACHE_APPEND_PHRASE" $APACHE_VHOST_FILE || echo "$APACHE_APPEND_PHRASE" >> $APACHE_VHOST_FILE
@@ -65,12 +65,15 @@ PHP_CONFIG_FILE="/opt/bitnami/php/etc/php-fpm.conf"
 PHP_APPEND_PHRASE="include=/opt/bitnami/apps/$APP_NAME/conf/php-fpm/pool.conf"
 grep -q -F "$PHP_APPEND_PHRASE" $PHP_CONFIG_FILE || echo "$PHP_APPEND_PHRASE" >> $PHP_CONFIG_FILE
 
-################################
-# 8) fix file ownership
-################################
+####################################
+# 7) Change file ownership for web
+####################################
 chown bitnami:bitnami "$APP_ROOT/htdocs"
 chown bitnami:daemon "$APP_ROOT/log"
 
+####################################
+# 8) Politely say goodbye :)
+####################################
 printf "\n\n"
 printf "App $APP_NAME has been created"
 printf "\n"
