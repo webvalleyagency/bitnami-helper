@@ -68,8 +68,8 @@ grep -q -F "$PHP_APPEND_PHRASE" $PHP_CONFIG_FILE || echo "$PHP_APPEND_PHRASE" >>
 ################################
 # 8) fix file ownership
 ################################
-chown "bitnami:bitnami" "$APP_ROOT/htdocs"
-chown "bitnami:daemon" "$APP_ROOT/log"
+chown bitnami:bitnami "$APP_ROOT/htdocs"
+chown bitnami:daemon "$APP_ROOT/log"
 
 printf "\n\n"
 printf "App $APP_NAME has been created"
