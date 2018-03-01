@@ -49,10 +49,10 @@ cp -R "vhost/" $APP_ROOT
 ################################
 # 6) copy placeholders
 ################################
-find $APP_ROOT -type f -print0 | xargs -0 sed -i "s/%APP%/$APP_NAME/g"
-find $APP_ROOT -type f -print0 | xargs -0 sed -i "s/%APP_ROOT%/$APP_ROOT/g"
-find $APP_ROOT -type f -print0 | xargs -0 sed -i "s/%DOMAIN%/$DOMAIN/g"
-find $APP_ROOT -type f -print0 | xargs -0 sed -i "s/%DOMAIN_ALIAS%/$DOMAIN_ALIAS/g"
+find $APP_ROOT -type f -print0 | xargs -0 sed -i "s@%APP%@$APP_NAME@g"
+find $APP_ROOT -type f -print0 | xargs -0 sed -i "s@%APP_ROOT%@$APP_ROOT@g"
+find $APP_ROOT -type f -print0 | xargs -0 sed -i "s@%DOMAIN%@$DOMAIN@g"
+find $APP_ROOT -type f -print0 | xargs -0 sed -i "s@%DOMAIN_ALIAS%@$DOMAIN_ALIAS@g"
 
 ################################
 # 7) add necessary includes
