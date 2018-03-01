@@ -53,7 +53,19 @@ find $APP_ROOT -type f -print0 | xargs -0 sed -i "s/%APP%/$APP_NAME/g"
 find $APP_ROOT -type f -print0 | xargs -0 sed -i "s/%DOMAIN%/$DOMAIN/g"
 find $APP_ROOT -type f -print0 | xargs -0 sed -i "s/%DOMAIN_ALIAS%/$DOMAIN_ALIAS/g"
 
+################################
+# 7) add necessary includes
+################################
+APACHE_VHOST_FILE="/opt/bitnami/apache2/conf/bitnami/bitnami-apps-vhosts.conf"
+APACHE_APPEND_PHRASE="Include \"/opt/bitnami/apps/$APP_NAME/conf/httpd-vhosts.conf\""
+grep -q -F $APACHE_APPEND_PHRASE $APACHE_VHOST_FILE || echo $APACHE_APPEND_PHRASE >> $APACHE_VHOST_FILE
+
+PHP_CONFIG_FILE="/opt/bitnami/php/etc/php-fpm.conf"
+PHP_APPEND_PHRASE="include=/opt/bitnami/apps/$APP_NAME/conf/php-fpm/pool.conf"
+grep -q -F $PHP_APPEND_PHRASE $PHP_CONFIG_FILE || echo $PHP_APPEND_PHRASE >> $PHP_CONFIG_FILE
+
 printf "\n\n"
 printf "App $APP_NAME has been created"
 printf "\n"
-
+printf "Execute /opt/bitnami/ctlscript.sh restart to apply the changes"
+printf "\n"
