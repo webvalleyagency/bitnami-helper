@@ -8,8 +8,8 @@ fi
 # 1) Prepare variables
 ################################
 APP_NAME=$1
-APP_ROOT="/opt/bitnami/apps/$NORMALIZED_APP_NAME"
-DOMAIN="${APP_NAME//./-}"
+APP_ROOT="/opt/bitnami/apps/$APP_NAME"
+DOMAIN="${APP_NAME//-/.}"
 DOMAIN_ALIAS="www.$DOMAIN"
 
 ################################
