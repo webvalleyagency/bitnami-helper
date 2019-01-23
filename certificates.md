@@ -1,12 +1,12 @@
-* Let's Encrypt certificates on bitnami
+# Let's Encrypt certificates on bitnami
 
-** Prerequsities
+## Prerequsities
 
-*** Lego
+### Lego
 
 Install lego let's encrypt wrapper following this tutorial https://docs.bitnami.com/aws/how-to/generate-install-lets-encrypt-ssl/
 
-** First request
+### First request
 
 Run this command:
 
@@ -22,7 +22,7 @@ SSLCertificateFile /etc/lego/certificates/domain.com.crt
 SSLCertificateKeyFile /etc/lego/certificates/domain.com.key
 ```
 
-** Automatic Renewal
+## Automatic Renewal
 
 Add following code to root crontab.
 
